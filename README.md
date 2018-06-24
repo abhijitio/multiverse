@@ -49,6 +49,8 @@ Installation :-
     Install Bluebird: (https://pub.clevertech.biz/native-javascript-promises-vs-bluebird-9e58611be22)
 
     $ npm install bluebird@3 --save
+    
+    $ git clone https://github.com/abhijitio/multiverse.git
 
 
 Project Files :- 
