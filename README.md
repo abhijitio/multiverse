@@ -4,7 +4,7 @@ Setting Up Database :-
 
     CREATE DATABASE universe ;
 
-    CREATE TABLE universetable ( id INTEGER, power INTEGER, family_id VARCHAR, universe_name VARCHAR);
+    CREATE TABLE universetable ( id INTEGER, power INTEGER, family_id VARCHAR(50), universe_name VARCHAR(50));
 
     CREATE INDEX ON universetable (family_id);
 
