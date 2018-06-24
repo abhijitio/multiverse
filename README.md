@@ -1,7 +1,8 @@
 # multiverse
 
-Language :- NodeJS
-Database :- Postgresql
+    Language :- NodeJS
+
+    Database :- Postgresql
 
 Setting Up Database :- 
 
