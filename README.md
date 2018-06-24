@@ -51,7 +51,7 @@ Project Files :-
 
     routes/index.js :- It defines the routes
 
-    queries.js :- This file should be in root directory.
+    queries.js :- This file should be in root directory. It has all the logical operations.
 
 
 
