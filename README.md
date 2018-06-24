@@ -1,5 +1,8 @@
 # multiverse
 
+Language :- NodeJS
+Database :- Postgresql
+
 Setting Up Database :- 
 
     CREATE DATABASE universe ;
