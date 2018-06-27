@@ -82,7 +82,6 @@ function getFamilyStatus(req, res, next) {
 
 
 function getUnbalancedFamily(req, res, next) {
-  //db.any("SELECT f.* FROM universetable f JOIN (SELECT family_id, universe_name FROM universetable GROUP BY family_id, universe_name HAVING sum(power) != 0) as t ON t.family_id = f.family_id AND t.universe_name = f.universe_name")
     db.any("SELECT f.* FROM  ( SELECT family_id FROM  ( SELECT family_id, universe_name, sum(power) AS total_power FROM   universetable GROUP  BY family_id, universe_name ) sub GROUP  BY 1 HAVING min(total_power) <> max(total_power)) sg JOIN universetable f USING (family_id)")
     .then(function (data) {
       res.status(200)
@@ -105,7 +104,7 @@ function getBalanced(req, res, next) {
         .json({
           status: 'success',
           data: data,
-          message: 'Get balanced families'
+          message: 'Make and Get balanced families'
         });
     })
     .catch(function (err) {
