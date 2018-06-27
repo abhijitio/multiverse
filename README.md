@@ -77,3 +77,5 @@ APIs :-
     localhost:3000/api/check/:family_id :- GET , it returns True / False . To check  if families with same identifiers have same power in all universes.
 
     localhost:3000/api/unbalanced :- GET , it returns the unbalanced families, where family total power is not zero in each family_id under each universe.
+    
+    localhost:3000/api/getbalanced :- GET, adjust the power of family and returns the updated data.
