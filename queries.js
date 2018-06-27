@@ -20,7 +20,8 @@ module.exports = {
   getFamilyStatus: getFamilyStatus,
   getUnbalancedFamily: getUnbalancedFamily,
   getUniverseFamily: getUniverseFamily,
-  createUniverse: createUniverse
+  createUniverse: createUniverse,
+  getBalanced: getBalanced
 };
 
 
@@ -81,13 +82,30 @@ function getFamilyStatus(req, res, next) {
 
 
 function getUnbalancedFamily(req, res, next) {
-  db.any("SELECT f.* FROM universetable f JOIN (SELECT family_id, universe_name FROM universetable GROUP BY family_id, universe_name HAVING sum(power) != 0) as t ON t.family_id = f.family_id AND t.universe_name = f.universe_name")
+  //db.any("SELECT f.* FROM universetable f JOIN (SELECT family_id, universe_name FROM universetable GROUP BY family_id, universe_name HAVING sum(power) != 0) as t ON t.family_id = f.family_id AND t.universe_name = f.universe_name")
+    db.any("SELECT f.* FROM  ( SELECT family_id FROM  ( SELECT family_id, universe_name, sum(power) AS total_power FROM   universetable GROUP  BY family_id, universe_name ) sub GROUP  BY 1 HAVING min(total_power) <> max(total_power)) sg JOIN universetable f USING (family_id)")
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
           message: 'Get Unbalanced families'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
+
+function getBalanced(req, res, next) {
+    db.any("with universetable(id, power, family_id, universe_name) as (select * from universetable as x(id, power, family_id, universe_name) ), sub_per_group as (select family_id, universe_name, sum(power) tot_per_grp from universetable group by family_id, universe_name), sub_calc as ( select family_id, max(tot_per_grp) as max, json_agg( json_build_object('universe_name',universe_name, 'tot_per_grp',tot_per_grp)) as grps_tot from sub_per_group group by family_id having count(distinct tot_per_grp)!=1) select f.id,f.family_id, case when rn=1 then (power+(coalesce(max,0)- coalesce((select (v->>'tot_per_grp')::int from json_array_elements(grps_tot) as v where (v->>'universe_name')::text =f.universe_name),0)))else power end, f.universe_name from sub_calc sc right join (select row_number() over(partition by family_id,universe_name) as rn, universetable.* from universetable) f on f.family_id=sc.family_id and f.rn=1 order by family_id,universe_name")
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Get balanced families'
         });
     })
     .catch(function (err) {
